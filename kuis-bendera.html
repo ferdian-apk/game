@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tebak Bendera Dunia</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #0f0c29; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: #1e1e2e; width: 90%; max-width: 450px; padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .flag-img { width: 200px; height: auto; border-radius: 10px; border: 3px solid #6c5ce7; margin: 20px 0; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        button { padding: 12px; border: none; border-radius: 10px; background: #333; color: white; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        button:hover { background: #6c5ce7; }
+        .score { font-size: 1.2rem; margin-bottom: 10px; color: #00d2ff; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="score">Skor: <span id="score">0</span></div>
+    <p>Bendera negara manakah ini?</p>
+    <img id="flag-display" class="flag-img" src="" alt="Bendera">
+    <div class="options" id="options-container"></div>
+</div>
+
+<script>
+    // Data Bendera (Nama dan Kode Negara)
+    const countries = [
+        { name: "Indonesia", code: "id" },
+        { name: "Jepang", code: "jp" },
+        { name: "Korea Selatan", code: "kr" },
+        { name: "Jerman", code: "de" },
+        { name: "Prancis", code: "fr" },
+        { name: "Brasil", code: "br" },
+        { name: "Amerika Serikat", code: "us" },
+        { name: "Inggris", code: "gb" },
+        { name: "Italia", code: "it" },
+        { name: "Kanada", code: "ca" }
+    ];
+
+    let score = 0;
+    let currentAnswer = "";
+
+    function nextQuestion() {
+        const randomIndex = Math.floor(Math.random() * countries.length);
+        const correct = countries[randomIndex];
+        currentAnswer = correct.name;
+
+        // Set Gambar Bendera (Menggunakan FlagPedia API)
+        document.getElementById('flag-display').src = `https://flagcdn.com/w320/${correct.code}.png`;
+
+        // Buat pilihan jawaban
+        let choices = [correct.name];
+        while(choices.length < 4) {
+            let randomName = countries[Math.floor(Math.random() * countries.length)].name;
+            if(!choices.includes(randomName)) choices.push(randomName);
+        }
+        
+        choices.sort(() => Math.random() - 0.5);
+
+        const container = document.getElementById('options-container');
+        container.innerHTML = "";
+        choices.forEach(choice => {
+            const btn = document.createElement('button');
+            btn.innerText = choice;
+            btn.onclick = () => check(choice);
+            container.appendChild(btn);
+        });
+    }
+
+    function check(answer) {
+        if(answer === currentAnswer) {
+            score++;
+            document.getElementById('score').innerText = score;
+            nextQuestion();
+        } else {
+            alert(`Salah! Itu adalah bendera ${currentAnswer}. Skor akhir: ${score}`);
+            score = 0;
+            document.getElementById('score').innerText = score;
+            nextQuestion();
+        }
+    }
+
+    nextQuestion();
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Matematika Cepat</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .quiz-container { background: #16213e; width: 90%; max-width: 400px; padding: 30px; border-radius: 20px; text-align: center; border: 2px solid #e94560; }
+        .question-box { font-size: 2.5rem; font-weight: bold; margin: 20px 0; color: #00d2ff; }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        button { padding: 15px; border: none; border-radius: 12px; background: #0f3460; color: white; font-size: 1.2rem; cursor: pointer; transition: 0.2s; }
+        button:active { transform: scale(0.95); background: #e94560; }
+        .score-text { font-size: 1rem; color: #add8e6; margin-bottom: 10px; }
+        .timer-bar { width: 100%; height: 5px; background: #333; margin-bottom: 20px; border-radius: 5px; overflow: hidden; }
+        .timer-fill { width: 100%; height: 100%; background: #e94560; transition: linear; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="score-text">Skor: <span id="score">0</span></div>
+    <div class="timer-bar"><div id="timer" class="timer-fill"></div></div>
+    <div id="game-area">
+        <div class="question-box" id="question">0 + 0</div>
+        <div class="options" id="options">
+            </div>
+    </div>
+</div>
+
+<script>
+    let score = 0;
+    let correctAnswer;
+
+    function generateQuestion() {
+        // Pilih angka acak 1-20
+        const a = Math.floor(Math.random() * 20) + 1;
+        const b = Math.floor(Math.random() * 20) + 1;
+        const operators = ['+', '-', '*'];
+        const op = operators[Math.floor(Math.random() * operators.length)];
+
+        document.getElementById('question').innerText = `${a} ${op === '*' ? '×' : op} ${b}`;
+        
+        if(op === '+') correctAnswer = a + b;
+        else if(op === '-') correctAnswer = a - b;
+        else correctAnswer = a * b;
+
+        generateOptions(correctAnswer);
+    }
+
+    function generateOptions(correct) {
+        const container = document.getElementById('options');
+        container.innerHTML = "";
+        
+        // Buat 4 pilihan (1 benar, 3 salah acak)
+        let choices = [correct];
+        while(choices.length < 4) {
+            let wrong = correct + (Math.floor(Math.random() * 10) - 5);
+            if(!choices.includes(wrong)) choices.push(wrong);
+        }
+
+        // Acak posisi tombol
+        choices.sort(() => Math.random() - 0.5);
+
+        choices.forEach(val => {
+            const btn = document.createElement('button');
+            btn.innerText = val;
+            btn.onclick = () => checkAnswer(val);
+            container.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(val) {
+        if(val === correctAnswer) {
+            score++;
+            document.getElementById('score').innerText = score;
+            generateQuestion();
+        } else {
+            alert("Salah! Skor akhir kamu: " + score);
+            score = 0;
+            document.getElementById('score').innerText = score;
+            generateQuestion();
+        }
+    }
+
+    // Mulai game
+    generateQuestion();
+</script>
+</body>
+</html>

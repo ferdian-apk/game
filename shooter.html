@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Shooter</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; font-family: sans-serif; }
+        canvas { display: block; background: radial-gradient(circle, #1b2735 0%, #090a0f 100%); }
+        #ui { position: absolute; top: 10px; left: 10px; color: white; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div id="ui">Skor: <span id="score">0</span></div>
+    <canvas id="gameCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const scoreEl = document.getElementById("score");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let score = 0;
+    let player = { x: canvas.width / 2, y: canvas.height - 50, w: 30, h: 30 };
+    let bullets = [];
+    let enemies = [];
+
+    // Kontrol Sentuh/Mouse
+    window.addEventListener("mousemove", (e) => { player.x = e.clientX; });
+    window.addEventListener("touchmove", (e) => { 
+        player.x = e.touches[0].clientX; 
+        e.preventDefault();
+    }, {passive: false});
+
+    // Tembak otomatis
+    setInterval(() => {
+        bullets.push({ x: player.x, y: player.y, r: 4 });
+    }, 200);
+
+    function spawnEnemy() {
+        enemies.push({ x: Math.random() * canvas.width, y: -30, size: 20 + Math.random() * 20 });
+    }
+    setInterval(spawnEnemy, 1000);
+
+    function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Gambar Pemain (Pesawat Segitiga)
+        ctx.fillStyle = "#00d2ff";
+        ctx.beginPath();
+        ctx.moveTo(player.x, player.y - 15);
+        ctx.lineTo(player.x - 20, player.y + 15);
+        ctx.lineTo(player.x + 20, player.y + 15);
+        ctx.fill();
+
+        // Update & Gambar Peluru
+        bullets.forEach((b, i) => {
+            b.y -= 7;
+            ctx.fillStyle = "yellow";
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+            ctx.fill();
+            if (b.y < 0) bullets.splice(i, 1);
+        });
+
+        // Update & Gambar Musuh (Meteor)
+        enemies.forEach((en, i) => {
+            en.y += 3;
+            ctx.fillStyle = "#ff4757";
+            ctx.beginPath();
+            ctx.rect(en.x - en.size/2, en.y, en.size, en.size);
+            ctx.fill();
+
+            // Cek Tabrakan dengan Peluru
+            bullets.forEach((b, bi) => {
+                if (b.x > en.x - en.size/2 && b.x < en.x + en.size/2 && b.y > en.y && b.y < en.y + en.size) {
+                    enemies.splice(i, 1);
+                    bullets.splice(bi, 1);
+                    score += 10;
+                    scoreEl.innerText = score;
+                }
+            });
+
+            // Game Over jika musuh lewat bawah atau tabrak pemain
+            if (en.y > canvas.height) {
+                enemies.splice(i, 1);
+            }
+        });
+
+        requestAnimationFrame(update);
+    }
+
+    update();
+</script>
+</body>
+</html>

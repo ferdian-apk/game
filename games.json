@@ -1,0 +1,86 @@
+[
+    {
+        "id": 1,
+        "title": "Sejarah Dunia",
+        "category": "Kuis",
+        "url": "kuis-sejarah.html",
+        "image": "https://via.placeholder.com/100x80/6c5ce7/ffffff?text=Sejarah"
+    },
+    {
+        "id": 2,
+        "title": "Neon Snake",
+        "category": "Arcade",
+        "url": "snake.html",
+        "image": "https://via.placeholder.com/100x80/00ff41/000000?text=Snake"
+    },
+    {
+        "id": 3,
+        "title": "Logika Matematika",
+        "category": "Edukasi",
+        "url": "kuis-mtk.html",
+        "image": "https://via.placeholder.com/100x80/e94560/ffffff?text=MTK"
+    },
+    {
+        "id": 4,
+        "title": "Tebak Bendera",
+        "category": "Kuis",
+        "url": "kuis-bendera.html",
+        "image": "https://via.placeholder.com/100x80/f1c40f/000000?text=Bendera"
+    },
+    {
+        "id": 5,
+        "title": "Tata Surya",
+        "category": "Sains",
+        "url": "kuis-astronomi.html",
+        "image": "https://via.placeholder.com/100x80/3498db/ffffff?text=Planet"
+    },
+    {
+        "id": 6,
+        "title": "Bahasa Inggris",
+        "category": "Edukasi",
+        "url": "kuis-inggris.html",
+        "image": "https://via.placeholder.com/100x80/2ecc71/ffffff?text=English"
+    },
+    {
+        "id": 7,
+        "title": "Space Shooter",
+        "category": "Arcade",
+        "url": "shooter.html",
+        "image": "https://via.placeholder.com/100x80/3498db/ffffff?text=Space"
+    },
+    {
+        "id": 8,
+        "title": "Tebak Kata",
+        "category": "Asah Otak",
+        "url": "hangman.html",
+        "image": "https://via.placeholder.com/100x80/6c5ce7/ffffff?text=Hangman"
+    },
+    {
+        "id": 9,
+        "title": "Tic Tac Toe",
+        "category": "Klasik",
+        "url": "tictactoe.html",
+        "image": "https://via.placeholder.com/100x80/e94560/ffffff?text=TicTacToe"
+    },
+    {
+        "id": 10,
+        "title": "Tebak Angka",
+        "category": "Asah Otak",
+        "url": "tebakangka.html",
+        "image": "https://via.placeholder.com/100x80/00d2ff/ffffff?text=Number"
+    },
+    {
+        "id": 11,
+        "title": "Tap The Dot",
+        "category": "Arcade",
+        "url": "tapthedot.html",
+        "image": "https://via.placeholder.com/100x80/3498db/ffffff?text=TapDot"
+    },
+    {
+        "id": 12,
+        "title": "Pukul Tikus",
+        "category": "Arcade",
+        "url": "pukultikus.html",
+        "image": "https://via.placeholder.com/100x80/ff4757/ffffff?text=WhackMole"
+    }
+]

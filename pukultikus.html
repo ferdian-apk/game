@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pukul Tikus!</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #0b0e22; color: white; text-align: center; margin: 0; overflow: hidden; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 300px; margin: 20px auto; }
+        .hole { width: 90px; height: 90px; background: #161b33; border: 3px solid #6c5ce7; border-radius: 50%; position: relative; overflow: hidden; cursor: crosshair; }
+        .mole { width: 70px; height: 70px; background: #ff4757; border-radius: 50%; position: absolute; bottom: -100%; left: 10px; transition: 0.2s; box-shadow: 0 -5px 15px rgba(255, 71, 87, 0.4); }
+        .mole.up { bottom: 10px; }
+        .score-board { font-size: 1.5rem; margin-top: 20px; color: #00d2ff; }
+        .btn { padding: 10px 20px; background: #2ecc71; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>PUKUL TIKUS!</h1>
+    <div class="score-board">Skor: <span id="score">0</span></div>
+    <button class="btn" id="startBtn" onclick="startGame()">Mulai!</button>
+    
+    <div class="grid">
+        <div class="hole"><div class="mole"></div></div>
+        <div class="hole"><div class="mole"></div></div>
+        <div class="hole"><div class="mole"></div></div>
+        <div class="hole"><div class="mole"></div></div>
+        <div class="hole"><div class="mole"></div></div>
+        <div class="hole"><div class="mole"></div></div>
+        <div class="hole"><div class="mole"></div></div>
+        <div class="hole"><div class="mole"></div></div>
+        <div class="hole"><div class="mole"></div></div>
+    </div>
+
+<script>
+    const holes = document.querySelectorAll('.hole');
+    const moles = document.querySelectorAll('.mole');
+    const scoreBoard = document.querySelector('#score');
+    let lastHole;
+    let timeUp = false;
+    let score = 0;
+
+    function randomTime(min, max) {
+        return Math.round(Math.random() * (max - min) + min);
+    }
+
+    function randomHole(holes) {
+        const idx = Math.floor(Math.random() * holes.length);
+        const hole = holes[idx];
+        if (hole === lastHole) return randomHole(holes);
+        lastHole = hole;
+        return hole;
+    }
+
+    function peep() {
+        const time = randomTime(500, 1000);
+        const hole = randomHole(holes);
+        const mole = hole.querySelector('.mole');
+        mole.classList.add('up');
+        setTimeout(() => {
+            mole.classList.remove('up');
+            if (!timeUp) peep();
+        }, time);
+    }
+
+    function startGame() {
+        scoreBoard.textContent = 0;
+        timeUp = false;
+        score = 0;
+        document.getElementById('startBtn').style.display = 'none';
+        peep();
+        setTimeout(() => {
+            timeUp = true;
+            alert('Waktu Habis! Skor Akhir: ' + score);
+            document.getElementById('startBtn').style.display = 'inline-block';
+        }, 15000);
+    }
+
+    moles.forEach(mole => mole.addEventListener('click', function() {
+        score++;
+        this.classList.remove('up');
+        scoreBoard.textContent = score;
+    }));
+</script>
+</body>
+</html>

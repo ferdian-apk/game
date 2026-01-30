@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tap The Dot!</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #0b0e22; color: white; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; user-select: none; }
+        .game-area { width: 90%; max-width: 400px; height: 400px; background: #161b33; border-radius: 20px; border: 2px solid #6c5ce7; position: relative; overflow: hidden; margin-top: 20px; }
+        .dot { width: 50px; height: 50px; background: #00d2ff; border-radius: 50%; position: absolute; cursor: pointer; transition: background 0.1s; }
+        .dot:active { background: #ff4757; }
+        #score { font-size: 2rem; color: #2ecc71; margin-bottom: 10px; }
+        #timer { font-size: 1.2rem; color: #ffeb3b; }
+        .msg { margin-top: 20px; font-weight: bold; }
+        .start-btn { padding: 15px 30px; background: #6c5ce7; color: white; border: none; border-radius: 10px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>TAP THE DOT!</h1>
+    <div id="score">Skor: 0</div>
+    <div id="timer">Waktu: 30</div>
+    <button class="start-btn" id="startButton" onclick="startGame()">Mulai Game</button>
+
+    <div class="game-area" id="gameArea">
+        </div>
+    <div class="msg" id="message"></div>
+
+<script>
+    const gameArea = document.getElementById('gameArea');
+    const scoreDisplay = document.getElementById('score');
+    const timerDisplay = document.getElementById('timer');
+    const messageDisplay = document.getElementById('message');
+    const startButton = document.getElementById('startButton');
+
+    let score = 0;
+    let timeLeft = 30;
+    let gameInterval;
+    let dotInterval;
+    let gameRunning = false;
+
+    function startGame() {
+        if (gameRunning) return;
+        gameRunning = true;
+        score = 0;
+        timeLeft = 30;
+        scoreDisplay.innerText = `Skor: ${score}`;
+        timerDisplay.innerText = `Waktu: ${timeLeft}`;
+        messageDisplay.innerText = "";
+        startButton.style.display = 'none';
+        gameArea.innerHTML = "";
+
+        gameInterval = setInterval(updateTimer, 1000);
+        dotInterval = setInterval(spawnDot, 1000); // Munculkan dot setiap 1 detik
+    }
+
+    function updateTimer() {
+        timeLeft--;
+        timerDisplay.innerText = `Waktu: ${timeLeft}`;
+        if (timeLeft <= 0) {
+            endGame();
+        }
+    }
+
+    function spawnDot() {
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
+        dot.style.left = `${Math.random() * (gameArea.offsetWidth - 50)}px`;
+        dot.style.top = `${Math.random() * (gameArea.offsetHeight - 50)}px`;
+        dot.onclick = () => {
+            if (gameRunning) {
+                score++;
+                scoreDisplay.innerText = `Skor: ${score}`;
+                dot.remove(); // Hapus dot yang sudah diklik
+                spawnDot(); // Langsung munculkan dot baru
+            }
+        };
+        gameArea.appendChild(dot);
+
+        // Hapus dot jika tidak diklik dalam 1.5 detik (opsional, untuk tantangan)
+        setTimeout(() => {
+            if (gameArea.contains(dot) && gameRunning) {
+                dot.remove();
+            }
+        }, 1500);
+    }
+
+    function endGame() {
+        clearInterval(gameInterval);
+        clearInterval(dotInterval);
+        gameRunning = false;
+        messageDisplay.innerText = `Game Over! Skor akhir kamu: ${score}`;
+        startButton.innerText = "Main Lagi";
+        startButton.style.display = 'block';
+        gameArea.innerHTML = ""; // Bersihkan area game
+    }
+</script>
+</body>
+</html>

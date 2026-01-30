@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Sejarah Dunia</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; color: #fff; }
+        .quiz-container { background: #16213e; width: 90%; max-width: 500px; padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 1px solid #0f3460; }
+        h2 { color: #e94560; text-align: center; font-size: 1.2rem; min-height: 60px; }
+        .options { display: grid; gap: 12px; margin-top: 20px; }
+        button { padding: 15px; border: 1px solid #0f3460; border-radius: 10px; background: #0f3460; color: white; cursor: pointer; transition: 0.2s; font-size: 15px; text-align: left; }
+        button:hover { background: #e94560; border-color: #e94560; transform: translateY(-2px); }
+        .score-area { text-align: center; display: none; padding: 20px; }
+        .progress { font-size: 13px; color: #add8e6; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .final-score-num { font-size: 48px; font-weight: bold; color: #e94560; margin: 10px 0; }
+        .restart-btn { background: #e94560; text-align: center; font-weight: bold; margin-top: 20px; width: 100%; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quiz">
+    <div id="game-area">
+        <div class="progress" id="progress">Memuat...</div>
+        <h2 id="question">Teks Pertanyaan di Sini</h2>
+        <div class="options" id="options-container">
+            </div>
+    </div>
+    
+    <div id="result-area" class="score-area">
+        <h2>Kuis Selesai!</h2>
+        <p>Skor Akhir Kamu:</p>
+        <div class="final-score-num" id="final-score">0</div>
+        <p id="score-comment"></p>
+        <button class="restart-btn" onclick="location.reload()">Main Lagi</button>
+    </div>
+</div>
+
+<script>
+    // DATA GAME (20 Soal Sejarah Dunia)
+    const quizData = [
+        { q: "Siapakah penemu Benua Amerika pada tahun 1492?", a: ["Vasco da Gama", "Christopher Columbus", "Marco Polo", "Ferdinand Magellan"], correct: 1 },
+        { q: "Revolusi Industri pertama kali dimulai di negara mana?", a: ["Prancis", "Amerika Serikat", "Inggris", "Jerman"], correct: 2 },
+        { q: "Siapa tokoh yang memimpin Jerman pada masa Perang Dunia II?", a: ["Adolf Hitler", "Winston Churchill", "Benito Mussolini", "Joseph Stalin"], correct: 0 },
+        { q: "Peradaban kuno yang membangun Piramida Giza adalah...", a: ["Maya", "Inca", "Mesir", "Yunani"], correct: 2 },
+        { q: "Pada tahun berapakah Perang Dunia I dimulai?", a: ["1912", "1914", "1918", "1939"], correct: 1 },
+        { q: "Siapakah presiden pertama Amerika Serikat?", a: ["Abraham Lincoln", "Thomas Jefferson", "George Washington", "John Adams"], correct: 2 },
+        { q: "Tembok Besar Cina dibangun untuk menghalau serangan dari bangsa...", a: ["Mongol", "Jepang", "Persia", "Romawi"], correct: 0 },
+        { q: "Negara manakah yang menjatuhkan bom atom di Hiroshima dan Nagasaki?", a: ["Inggris", "Uni Soviet", "Jerman", "Amerika Serikat"], correct: 3 },
+        { q: "Konfrontasi ideologi antara Blok Barat dan Blok Timur disebut...", a: ["Perang Saudara", "Perang Dingin", "Perang Teluk", "Perang Salib"], correct: 1 },
+        { q: "Siapakah pelukis terkenal asal Italia yang menciptakan 'Mona Lisa'?", a: ["Michelangelo", "Donatello", "Raphael", "Leonardo da Vinci"], correct: 3 },
+        { q: "Kerajaan Romawi berpusat di negara yang sekarang bernama...", a: ["Spanyol", "Yunani", "Italia", "Turki"], correct: 2 },
+        { q: "Kapal pesiar mewah yang tenggelam pada tahun 1912 adalah...", a: ["Britannic", "Olympic", "Titanic", "Lusitania"], correct: 2 },
+        { q: "Siapakah wanita pertama yang terbang solo melintasi Samudra Atlantik?", a: ["Amelia Earhart", "Marie Curie", "Rosa Parks", "Florence Nightingale"], correct: 0 },
+        { q: "Peristiwa penyerangan pangkalan laut AS oleh Jepang disebut...", a: ["D-Day", "Waterloo", "Pearl Harbor", "Stalingrad"], correct: 2 },
+        { q: "Nama kaisar pertama Prancis adalah...", a: ["Louis XIV", "Napoleon Bonaparte", "Charles de Gaulle", "Charlemagne"], correct: 1 },
+        { q: "Siapakah filsuf Yunani yang merupakan guru dari Alexander Agung?", a: ["Socrates", "Plato", "Aristoteles", "Pythagoras"], correct: 2 },
+        { q: "Negara yang pernah menjajah Indonesia selama 3,5 abad adalah...", a: ["Inggris", "Jepang", "Belanda", "Portugis"], correct: 2 },
+        { q: "Apa nama perjanjian yang mengakhiri Perang Dunia I?", a: ["Perjanjian Linggarjati", "Perjanjian Versailles", "Perjanjian Renville", "Perjanjian Postdam"], correct: 1 },
+        { q: "Bangsa yang menemukan sistem tulisan Hieroglif adalah...", a: ["Sumeria", "Mesir Kuno", "Aztec", "Fenisia"], correct: 1 },
+        { q: "Siapakah tokoh dibalik gerakan Apartheid yang menjadi Presiden Afrika Selatan?", a: ["Martin Luther King", "Malcom X", "Nelson Mandela", "Barack Obama"], correct: 2 }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+
+    function loadQuiz() {
+        const currentQuiz = quizData[currentIdx];
+        document.getElementById('progress').innerText = `SOAL ${currentIdx + 1} / ${quizData.length}`;
+        document.getElementById('question').innerText = currentQuiz.q;
+        
+        const container = document.getElementById('options-container');
+        container.innerHTML = "";
+        
+        currentQuiz.a.forEach((option, index) => {
+            const btn = document.createElement('button');
+            btn.innerText = `${String.fromCharCode(65 + index)}. ${option}`; // Menambah A, B, C, D
+            btn.onclick = () => checkAnswer(index);
+            container.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected) {
+        if(selected === quizData[currentIdx].correct) {
+            score++;
+        }
+        
+        currentIdx++;
+        if(currentIdx < quizData.length) {
+            loadQuiz();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById('game-area').style.display = 'none';
+        const resArea = document.getElementById('result-area');
+        resArea.style.display = 'block';
+        
+        const finalScore = Math.round((score / quizData.length) * 100);
+        document.getElementById('final-score').innerText = finalScore;
+
+        let comment = "";
+        if(finalScore === 100) comment = "Luar Biasa! Kamu Ahli Sejarah!";
+        else if(finalScore >= 70) comment = "Bagus Sekali!";
+        else comment = "Ayo Belajar Lagi!";
+        
+        document.getElementById('score-comment').innerText = comment;
+    }
+
+    // Jalankan pertama kali
+    loadQuiz();
+</script>
+</body>
+</html>

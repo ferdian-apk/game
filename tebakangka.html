@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tebak Angka Misteri</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #0b0e22; color: white; text-align: center; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .box { background: #161b33; padding: 30px; border-radius: 20px; border: 2px solid #00d2ff; box-shadow: 0 0 20px rgba(0, 210, 255, 0.2); width: 90%; max-width: 350px; }
+        input { width: 80%; padding: 15px; margin: 20px 0; border-radius: 10px; border: none; font-size: 1.2rem; text-align: center; }
+        button { background: #6c5ce7; color: white; border: none; padding: 15px 30px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; }
+        button:active { transform: scale(0.98); }
+        #feedback { margin-top: 20px; font-weight: bold; min-height: 24px; color: #ff4757; }
+        .attempts { font-size: 0.9rem; color: #aaa; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h1>TEBAK ANGKA</h1>
+    <p>Aku memikirkan angka antara 1 sampai 100. Bisa tebak?</p>
+    <input type="number" id="guessInput" placeholder="Masukkan angka...">
+    <button onclick="checkGuess()">TEBAK!</button>
+    <div id="feedback"></div>
+    <div class="attempts">Percobaan: <span id="count">0</span></div>
+</div>
+
+<script>
+    let targetNumber = Math.floor(Math.random() * 100) + 1;
+    let attempts = 0;
+
+    function checkGuess() {
+        const input = document.getElementById('guessInput');
+        const feedback = document.getElementById('feedback');
+        const countDisplay = document.getElementById('count');
+        const userGuess = parseInt(input.value);
+
+        if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
+            feedback.innerText = "Masukkan angka 1-100!";
+            return;
+        }
+
+        attempts++;
+        countDisplay.innerText = attempts;
+
+        if (userGuess === targetNumber) {
+            feedback.style.color = "#2ecc71";
+            feedback.innerText = `TEPAT! Angkanya adalah ${targetNumber}. 🎉`;
+            setTimeout(() => {
+                if(confirm("Main lagi?")) resetGame();
+            }, 500);
+        } else if (userGuess < targetNumber) {
+            feedback.style.color = "#ff4757";
+            feedback.innerText = "Terlalu RENDAH! Coba lagi.";
+        } else {
+            feedback.style.color = "#ff4757";
+            feedback.innerText = "Terlalu TINGGI! Coba lagi.";
+        }
+        
+        input.value = "";
+        input.focus();
+    }
+
+    function resetGame() {
+        targetNumber = Math.floor(Math.random() * 100) + 1;
+        attempts = 0;
+        document.getElementById('count').innerText = "0";
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('guessInput').value = "";
+    }
+</script>
+</body>
+</html>

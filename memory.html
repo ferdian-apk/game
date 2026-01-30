@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Match - Brain Game</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #0b0e22; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; flex-direction: column; }
+        .info { margin-bottom: 20px; text-align: center; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 350px; }
+        .card { width: 75px; height: 100px; background: #6c5ce7; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 2rem; transform: rotateY(0deg); transition: transform 0.3s; transform-style: preserve-3d; position: relative; }
+        .card.flipped { transform: rotateY(180deg); background: #161b33; border: 2px solid #00d2ff; }
+        .card .front, .card .back { position: absolute; backface-visibility: hidden; }
+        .card .back { transform: rotateY(180deg); }
+        .hidden { visibility: hidden; }
+        #msg { margin-top: 20px; color: #00d2ff; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="info">
+    <h2>MEMORY MATCH</h2>
+    <p>Temukan pasangan gambar!</p>
+</div>
+
+<div class="grid" id="game-grid"></div>
+
+<div id="msg"></div>
+<button id="restart" style="display:none; margin-top:15px; padding:10px 20px; background:#6c5ce7; color:white; border:none; border-radius:5px;" onclick="resetGame()">Main Lagi</button>
+
+<script>
+    const emojis = ['🍎', '🍎', '🚀', '🚀', '💎', '💎', '👻', '👻', '🎮', '🎮', '🍕', '🍕', '🐱', '🐱', '🏀', '🏀'];
+    let flippedCards = [];
+    let matchedCount = 0;
+    let canFlip = true;
+
+    function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+
+    function createBoard() {
+        const grid = document.getElementById('game-grid');
+        const shuffled = shuffle([...emojis]);
+        grid.innerHTML = '';
+        
+        shuffled.forEach((emoji, index) => {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.dataset.value = emoji;
+            card.innerHTML = `
+                <div class="front">?</div>
+                <div class="back">${emoji}</div>
+            `;
+            card.onclick = () => flipCard(card);
+            grid.appendChild(card);
+        });
+    }
+
+    function flipCard(card) {
+        if (!canFlip || card.classList.contains('flipped') || flippedCards.length === 2) return;
+
+        card.classList.add('flipped');
+        flippedCards.push(card);
+
+        if (flippedCards.length === 2) {
+            canFlip = false;
+            setTimeout(checkMatch, 800);
+        }
+    }
+
+    function checkMatch() {
+        const [card1, card2] = flippedCards;
+        if (card1.dataset.value === card2.dataset.value) {
+            matchedCount += 2;
+            flippedCards = [];
+            if (matchedCount === emojis.length) {
+                document.getElementById('msg').innerText = "Selamat! Kamu Menang!";
+                document.getElementById('restart').style.display = "block";
+            }
+        } else {
+            card1.classList.remove('flipped');
+            card2.classList.remove('flipped');
+            flippedCards = [];
+        }
+        canFlip = true;
+    }
+
+    function resetGame() {
+        matchedCount = 0;
+        document.getElementById('msg').innerText = "";
+        document.getElementById('restart').style.display = "none";
+        createBoard();
+    }
+
+    createBoard();
+</script>
+</body>
+</html>

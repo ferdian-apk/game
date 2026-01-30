@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Snake Game</title>
+    <style>
+        body {
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; margin: 0; background: #0a0a0a;
+            color: #00ff41; font-family: 'Courier New', Courier, monospace;
+            flex-direction: column; overflow: hidden;
+        }
+        canvas {
+            border: 2px solid #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+            background: #000;
+        }
+        .info { margin-bottom: 10px; text-align: center; }
+        .controls { margin-top: 15px; display: grid; grid-template-columns: repeat(3, 50px); gap: 5px; }
+        button { 
+            width: 50px; height: 50px; background: #1a1a1a; color: #00ff41; 
+            border: 1px solid #00ff41; border-radius: 5px; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="info">
+        <h1>NEON SNAKE</h1>
+        <p>Skor: <span id="score">0</span></p>
+    </div>
+
+    <canvas id="gameCanvas" width="300" height="300"></canvas>
+
+    <div class="controls">
+        <div></div><button onclick="changeDir('up')">↑</button><div></div>
+        <button onclick="changeDir('left')">←</button>
+        <button onclick="changeDir('down')">↓</button>
+        <button onclick="changeDir('right')">→</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const scoreElement = document.getElementById("score");
+
+        const box = 20;
+        let score = 0;
+        let snake = [{x: 10 * box, y: 10 * box}];
+        let food = {
+            x: Math.floor(Math.random() * 15) * box,
+            y: Math.floor(Math.random() * 15) * box
+        };
+        let d = "right";
+
+        // Kontrol Keyboard
+        document.addEventListener("keydown", (e) => {
+            if(e.keyCode == 37 && d != "right") d = "left";
+            else if(e.keyCode == 38 && d != "down") d = "up";
+            else if(e.keyCode == 39 && d != "left") d = "right";
+            else if(e.keyCode == 40 && d != "up") d = "down";
+        });
+
+        // Kontrol Tombol Layar
+        function changeDir(dir) {
+            if(dir == "left" && d != "right") d = "left";
+            else if(dir == "up" && d != "down") d = "up";
+            else if(dir == "right" && d != "left") d = "right";
+            else if(dir == "down" && d != "up") d = "down";
+        }
+
+        function draw() {
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Gambar Ular
+            for(let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = (i == 0) ? "#00ff41" : "#008f11";
+                ctx.fillRect(snake[i].x, snake[i].y, box, box);
+                ctx.strokeStyle = "black";
+                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+            }
+
+            // Gambar Makanan
+            ctx.fillStyle = "#ff003c";
+            ctx.fillRect(food.x, food.y, box, box);
+
+            let snakeX = snake[0].x;
+            let snakeY = snake[0].y;
+
+            if( d == "left") snakeX -= box;
+            if( d == "up") snakeY -= box;
+            if( d == "right") snakeX += box;
+            if( d == "down") snakeY += box;
+
+            // Logika Makan
+            if(snakeX == food.x && snakeY == food.y) {
+                score++;
+                scoreElement.innerHTML = score;
+                food = {
+                    x: Math.floor(Math.random() * 15) * box,
+                    y: Math.floor(Math.random() * 15) * box
+                };
+            } else {
+                snake.pop();
+            }
+
+            let newHead = { x: snakeX, y: snakeY };
+
+            // Game Over (Tabrak Dinding atau Tubuh Sendiri)
+            if(snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
+                clearInterval(game);
+                alert("Game Over! Skor kamu: " + score);
+                location.reload();
+            }
+
+            snake.unshift(newHead);
+        }
+
+        function collision(head, array) {
+            for(let i = 0; i < array.length; i++) {
+                if(head.x == array[i].x && head.y == array[i].y) return true;
+            }
+            return false;
+        }
+
+        let game = setInterval(draw, 150);
+    </script>
+</body>
+</html>

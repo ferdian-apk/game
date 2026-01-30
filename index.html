@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mega Game Hub - 1000 In 1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #6c5ce7; --bg: #0b0e22; --card-bg: #161b33; --accent: #00d2ff; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: white; margin: 0; padding: 0; }
+        
+        .sticky-header { position: sticky; top: 0; background: var(--bg); z-index: 50; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .header h1 { margin: 0; font-size: 24px; color: var(--accent); text-align: center; letter-spacing: 2px; }
+        
+        .search-container { margin: 15px auto; max-width: 500px; position: relative; }
+        .search-container input { width: 100%; padding: 12px 20px; border-radius: 25px; border: none; background: var(--card-bg); color: white; box-sizing: border-box; outline: none; border: 1px solid #333; transition: 0.3s; }
+        .search-container input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(108, 92, 231, 0.3); }
+
+        .stats { display: flex; justify-content: space-around; padding: 0 20px 20px; text-align: center; font-size: 14px; border-bottom: 1px solid #222; }
+        .stats strong { color: var(--primary); font-size: 18px; }
+
+        #main-container { padding: 20px; margin-bottom: 80px; min-height: 100vh; }
+        .category-section { margin-top: 25px; }
+        .category-title { font-size: 18px; border-left: 4px solid var(--primary); padding-left: 12px; margin-bottom: 15px; color: #eee; }
+        
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 12px; }
+        .game-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; transition: 0.3s; text-align: center; border: 1px solid #252a44; cursor: pointer; }
+        .game-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .game-card img { width: 100%; height: 85px; object-fit: cover; filter: brightness(0.9); background: #333; }
+        .game-card p { font-size: 11px; margin: 8px 0; padding: 0 5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        #game-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 1000; }
+        .back-btn { position: absolute; top: 15px; left: 15px; padding: 10px 15px; background: rgba(108, 92, 231, 0.8); color: white; border: none; border-radius: 30px; z-index: 1001; cursor: pointer; backdrop-filter: blur(5px); font-weight: bold; }
+        iframe { width: 100%; height: 100%; border: none; }
+        
+        .loading { text-align: center; margin-top: 50px; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="sticky-header">
+    <div class="header">
+        <h1>MEGA GAME HUB</h1>
+    </div>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Cari 1000+ game..." onkeyup="filterGames()">
+    </div>
+</div>
+
+<div class="stats">
+    <div><strong id="game-count">0</strong><br>Games</div>
+    <div><strong>4.8/5</strong><br>Rating</div>
+    <div><strong>Baru</strong><br>Harian</div>
+</div>
+
+<div id="main-container">
+    <div class="loading">Memuat daftar game ajaib...</div>
+</div>
+
+<div id="game-overlay">
+    <button class="back-btn" onclick="closeGame()">✕ KEMBALI</button>
+    <iframe id="game-frame" src=""></iframe>
+</div>
+
+<script>
+    let allGames = []; // Tempat menyimpan data dari JSON
+
+    // 1. Ambil data dari games.json
+    async function fetchGames() {
+        try {
+            const response = await fetch('games.json');
+            allGames = await response.json();
+            renderGames(allGames);
+            document.getElementById('game-count').innerText = allGames.length;
+        } catch (error) {
+            console.error("Error loading JSON:", error);
+            document.getElementById('main-container').innerHTML = "<p style='text-align:center'>Gagal memuat file games.json. Pastikan file tersedia!</p>";
+        }
+    }
+
+    // 2. Render Games ke Layar
+    function renderGames(data) {
+        const container = document.getElementById('main-container');
+        container.innerHTML = "";
+        
+        if (data.length === 0) {
+            container.innerHTML = "<p style='text-align:center'>Game tidak ditemukan...</p>";
+            return;
+        }
+
+        const categories = [...new Set(data.map(game => game.category))];
+
+        categories.forEach(cat => {
+            const section = document.createElement('div');
+            section.className = 'category-section';
+            
+            const filteredGames = data.filter(game => game.category === cat);
+            
+            section.innerHTML = `
+                <h3 class="category-title">${cat} (${filteredGames.length})</h3>
+                <div class="game-grid">
+                    ${filteredGames.map(game => `
+                        <div class="game-card" onclick="openGame('${game.url}')">
+                            <img src="${game.image || game.img}" alt="${game.title}" onerror="this.src='https://via.placeholder.com/150x100?text=No+Image'">
+                            <p>${game.title}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(section);
+        });
+    }
+
+    // 3. Fungsi Cari Game
+    function filterGames() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = allGames.filter(game => 
+            game.title.toLowerCase().includes(query) || 
+            game.category.toLowerCase().includes(query)
+        );
+        renderGames(filtered);
+    }
+
+    function openGame(url) {
+        document.getElementById('game-frame').src = url;
+        document.getElementById('game-overlay').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeGame() {
+        document.getElementById('game-overlay').style.display = 'none';
+        document.getElementById('game-frame').src = "";
+        document.body.style.overflow = 'auto';
+    }
+
+    // Jalankan saat startup
+    window.onload = fetchGames;
+</script>
+
+</body>
+</html>

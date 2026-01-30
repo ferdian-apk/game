@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tebak Kata - Hangman</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #0b0e22; color: white; text-align: center; padding: 20px; }
+        .word-display { font-size: 2rem; letter-spacing: 10px; margin: 20px; color: #00d2ff; }
+        .keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; max-width: 500px; margin: 0 auto; }
+        button { padding: 10px 15px; border: none; border-radius: 5px; background: #6c5ce7; color: white; cursor: pointer; font-weight: bold; }
+        button:disabled { background: #333; cursor: not-allowed; }
+        .lives { font-size: 1.2rem; color: #ff4757; margin-bottom: 20px; }
+        #msg { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>TEBAK KATA</h1>
+    <div class="lives">Nyawa: <span id="lives">6</span></div>
+    <div class="word-display" id="wordDisplay">_ _ _ _</div>
+    <div class="keyboard" id="keyboard"></div>
+    <div id="msg"></div>
+    <button id="resetBtn" style="display:none; margin: 20px auto; background: #2ecc71;" onclick="initGame()">Main Lagi</button>
+
+<script>
+    const words = ["PLANET", "ROBOT", "GALAXY", "CODING", "GAMER", "ANDROID", "PYTHON", "BINTANG"];
+    let selectedWord = "";
+    let guessedLetters = [];
+    let lives = 6;
+
+    function initGame() {
+        lives = 6;
+        guessedLetters = [];
+        selectedWord = words[Math.floor(Math.random() * words.length)];
+        document.getElementById('lives').innerText = lives;
+        document.getElementById('msg').innerText = "";
+        document.getElementById('resetBtn').style.display = "none";
+        renderWord();
+        renderKeyboard();
+    }
+
+    function renderWord() {
+        const display = selectedWord.split('').map(letter => 
+            guessedLetters.includes(letter) ? letter : "_"
+        ).join(' ');
+        document.getElementById('wordDisplay').innerText = display;
+
+        if (!display.includes("_")) {
+            document.getElementById('msg').innerText = "Kamu Menang! 🎉";
+            disableAllButtons();
+        }
+    }
+
+    function renderKeyboard() {
+        const keyboard = document.getElementById('keyboard');
+        keyboard.innerHTML = "";
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(letter => {
+            const btn = document.createElement('button');
+            btn.innerText = letter;
+            btn.onclick = () => guess(letter, btn);
+            keyboard.appendChild(btn);
+        });
+    }
+
+    function guess(letter, btn) {
+        btn.disabled = true;
+        if (selectedWord.includes(letter)) {
+            guessedLetters.push(letter);
+            renderWord();
+        } else {
+            lives--;
+            document.getElementById('lives').innerText = lives;
+            if (lives <= 0) {
+                document.getElementById('msg').innerText = "Game Over! Katanya adalah: " + selectedWord;
+                disableAllButtons();
+            }
+        }
+    }
+
+    function disableAllButtons() {
+        const buttons = document.querySelectorAll('.keyboard button');
+        buttons.forEach(btn => btn.disabled = true);
+        document.getElementById('resetBtn').style.display = "block";
+    }
+
+    initGame();
+</script>
+</body>
+</html>
