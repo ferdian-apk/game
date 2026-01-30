@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Sejarah Dunia</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #0b0e22; color: white; text-align: center; padding: 20px; }
+        .q-box { background: #161b33; padding: 20px; border-radius: 15px; border: 2px solid #6c5ce7; margin-top: 50px; }
+        .options { display: grid; gap: 10px; margin-top: 20px; }
+        button { padding: 15px; border: none; border-radius: 10px; background: #333; color: white; cursor: pointer; font-weight: bold; }
+        button:hover { background: #6c5ce7; }
+        #score { color: #00d2ff; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+    <h1>KUIS SEJARAH</h1>
+    <div id="score">Skor: 0</div>
+    <div class="q-box">
+        <h2 id="question">Memuat soal...</h2>
+        <div class="options" id="options"></div>
+    </div>
+
+    <script>
+        const quizData = [
+            { q: "Siapa penemu benua Amerika?", a: ["Columbus", "Magellan", "Vasco da Gama"], c: 0 },
+            { q: "Tahun berapa Indonesia merdeka?", a: ["1942", "1945", "1950"], c: 1 },
+            { q: "Candi Borobudur terletak di provinsi?", a: ["Jawa Barat", "Jawa Timur", "Jawa Tengah"], c: 2 }
+        ];
+
+        let currentQ = 0; let score = 0;
+
+        function loadQ() {
+            const data = quizData[currentQ];
+            document.getElementById('question').innerText = data.q;
+            const optContainer = document.getElementById('options');
+            optContainer.innerHTML = "";
+            data.a.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.innerText = opt;
+                btn.onclick = () => check(i);
+                optContainer.appendChild(btn);
+            });
+        }
+
+        function check(i) {
+            if(i === quizData[currentQ].c) { score += 10; alert("Benar! +10"); }
+            else { alert("Salah!"); }
+            currentQ++;
+            if(currentQ < quizData.length) { loadQ(); }
+            else { alert("Kuis Selesai! Skor akhir: " + score); location.reload(); }
+            document.getElementById('score').innerText = "Skor: " + score;
+        }
+        loadQ();
+    </script>
+</body>
+</html>
+
