@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Logika Matematika</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #0b0e22; color: white; text-align: center; padding: 20px; }
+        .q-box { background: #161b33; padding: 25px; border-radius: 15px; border: 2px solid #e94560; margin-top: 50px; box-shadow: 0 0 20px rgba(233, 69, 96, 0.2); }
+        .options { display: grid; gap: 12px; margin-top: 20px; }
+        button { padding: 15px; border: none; border-radius: 10px; background: #1e2548; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1rem; }
+        button:hover { background: #e94560; transform: scale(1.02); }
+        #score-container { color: #00d2ff; font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; }
+        .timer { color: #ffeb3b; font-size: 1rem; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>LOGIKA MATEMATIKA</h1>
+    <div id="score-container">Skor: <span id="score">0</span></div>
+    
+    <div class="q-box">
+        <h2 id="question">Siap bermain?</h2>
+        <div class="options" id="options"></div>
+    </div>
+
+    <script>
+        const quizData = [
+            { q: "Jika 2 + 3 = 10, 7 + 2 = 63, maka 6 + 5 = ?", a: ["30", "66", "11"], c: 1 }, // Pola: (a+b) * a
+            { q: "Berapakah hasil dari 10 + 10 x 0?", a: ["0", "20", "10"], c: 2 },
+            { q: "Lanjutkan deret ini: 2, 4, 8, 16, ...", a: ["24", "32", "64"], c: 1 },
+            { q: "Ada berapa angka 9 dari 1 sampai 100?", a: ["10", "19", "20"], c: 2 },
+            { q: "Setengah dari 2 + 2 adalah...", a: ["2", "3", "4"], c: 1 } // (2/2) + 2 = 3
+        ];
+
+        let currentQ = 0; 
+        let score = 0;
+
+        function loadQuestion() {
+            const data = quizData[currentQ];
+            document.getElementById('question').innerText = data.q;
+            const optContainer = document.getElementById('options');
+            optContainer.innerHTML = "";
+            
+            data.a.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(i);
+                optContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            if(selectedIndex === quizData[currentQ].c) {
+                score += 20;
+                alert("Pintar! Jawaban Benar.");
+            } else {
+                alert("Yah, Kurang Tepat!");
+            }
+            
+            currentQ++;
+            document.getElementById('score').innerText = score;
+
+            if(currentQ < quizData.length) {
+                loadQuestion();
+            } else {
+                alert("Game Selesai! Skor Total: " + score);
+                // Kembali ke menu utama atau reset
+                currentQ = 0;
+                score = 0;
+                document.getElementById('score').innerText = "0";
+                loadQuestion();
+            }
+        }
+
+        // Jalankan soal pertama
+        loadQuestion();
+    </script>
+</body>
+</html>
