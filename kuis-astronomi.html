@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Tata Surya - Astronomy Game</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #0b0e22; color: white; text-align: center; padding: 20px; }
+        .q-box { background: #161b33; padding: 25px; border-radius: 15px; border: 2px solid #3498db; margin-top: 50px; box-shadow: 0 0 20px rgba(52, 152, 219, 0.3); }
+        .options { display: grid; gap: 12px; margin-top: 20px; }
+        button { padding: 15px; border: none; border-radius: 10px; background: #1e2548; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1rem; }
+        button:hover { background: #3498db; transform: scale(1.02); }
+        #score-display { color: #00d2ff; font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>KUIS TATA SURYA</h1>
+    <div id="score-display">Skor: <span id="score">0</span></div>
+    
+    <div class="q-box">
+        <h2 id="question">Memuat Soal...</h2>
+        <div class="options" id="options"></div>
+    </div>
+
+    <script>
+        const quizData = [
+            { q: "Apa nama planet yang dijuluki Planet Merah?", a: ["Venus", "Mars", "Saturnus"], c: 1 },
+            { q: "Planet terbesar di tata surya kita adalah...", a: ["Jupiter", "Uranus", "Neptunus"], c: 0 },
+            { q: "Berapa jumlah planet dalam tata surya kita?", a: ["7", "8", "9"], c: 1 },
+            { q: "Planet yang memiliki cincin paling terlihat adalah...", a: ["Saturnus", "Jupiter", "Mars"], c: 0 },
+            { q: "Pusat dari tata surya kita adalah...", a: ["Bumi", "Bulan", "Matahari"], c: 2 }
+        ];
+
+        let currentQ = 0; 
+        let score = 0;
+
+        function loadQuestion() {
+            const data = quizData[currentQ];
+            document.getElementById('question').innerText = data.q;
+            const optContainer = document.getElementById('options');
+            optContainer.innerHTML = "";
+            
+            data.a.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(i);
+                optContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            if(selectedIndex === quizData[currentQ].c) {
+                score += 20;
+                alert("Luar Biasa! Jawaban Tepat.");
+            } else {
+                alert("Kurang Tepat, Terus Belajar!");
+            }
+            
+            currentQ++;
+            document.getElementById('score').innerText = score;
+
+            if(currentQ < quizData.length) {
+                loadQuestion();
+            } else {
+                alert("Misi Selesai! Skor Penjelajah: " + score);
+                currentQ = 0;
+                score = 0;
+                document.getElementById('score').innerText = "0";
+                loadQuestion();
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
