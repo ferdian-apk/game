@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Quiz - Basic Vocabulary</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #0b0e22; color: white; text-align: center; padding: 20px; }
+        .q-box { background: #161b33; padding: 25px; border-radius: 15px; border: 2px solid #2ecc71; margin-top: 50px; box-shadow: 0 0 20px rgba(46, 204, 113, 0.2); }
+        .options { display: grid; gap: 12px; margin-top: 20px; }
+        button { padding: 15px; border: none; border-radius: 10px; background: #1e2548; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1rem; }
+        button:hover { background: #2ecc71; transform: translateY(-2px); }
+        #score-display { color: #f1c40f; font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>ENGLISH QUIZ</h1>
+    <div id="score-display">Score: <span id="score">0</span></div>
+    
+    <div class="q-box">
+        <h2 id="question">Loading...</h2>
+        <div class="options" id="options"></div>
+    </div>
+
+    <script>
+        const quizData = [
+            { q: "What is the English word for 'Semangka'?", a: ["Melon", "Watermelon", "Pineapple"], c: 1 },
+            { q: "I ... a student.", a: ["am", "is", "are"], c: 0 },
+            { q: "Which one is a 'Fruit'?", a: ["Spinach", "Carrot", "Apple"], c: 2 },
+            { q: "The color of the sky is usually...", a: ["Red", "Green", "Blue"], c: 2 },
+            { q: "What is the opposite of 'Small'?", a: ["Short", "Big", "Thin"], c: 1 }
+        ];
+
+        let currentQ = 0; 
+        let score = 0;
+
+        function loadQuestion() {
+            const data = quizData[currentQ];
+            document.getElementById('question').innerText = data.q;
+            const optContainer = document.getElementById('options');
+            optContainer.innerHTML = "";
+            
+            data.a.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(i);
+                optContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            if(selectedIndex === quizData[currentQ].c) {
+                score += 20;
+                alert("Correct! Well done.");
+            } else {
+                alert("Wrong! Try harder.");
+            }
+            
+            currentQ++;
+            document.getElementById('score').innerText = score;
+
+            if(currentQ < quizData.length) {
+                loadQuestion();
+            } else {
+                alert("Quiz Finished! Your Final Score: " + score);
+                currentQ = 0;
+                score = 0;
+                document.getElementById('score').innerText = "0";
+                loadQuestion();
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
